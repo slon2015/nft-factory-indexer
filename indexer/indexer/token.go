@@ -26,18 +26,18 @@ type TokenMintedEvent struct {
 	TokenURI string `json:"tokenUri"`
 }
 
-type TokenMintedEventMapper struct {
+type tokenMintedEventMapper struct {
 	parsedABI *abi.ABI
 }
 
-func NewTokenMintedEventMapper(abi *abi.ABI) *TokenMintedEventMapper {
+func newTokenMintedEventMapper(abi *abi.ABI) *tokenMintedEventMapper {
 
-	return &TokenMintedEventMapper{
+	return &tokenMintedEventMapper{
 		parsedABI: abi,
 	}
 }
 
-func (mapper *TokenMintedEventMapper) MapToTokenMintedEven(log types.Log) (*TokenMintedEvent, error) {
+func (mapper *tokenMintedEventMapper) mapToTokenMintedEven(log types.Log) (*TokenMintedEvent, error) {
 	var event mappedTokenMintedEvent;
 	err := mapper.parsedABI.UnpackIntoInterface(&event, "TokenMinted", log.Data)
 

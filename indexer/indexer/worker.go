@@ -9,20 +9,20 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-type WorkerConfig struct {
+type worker struct {
 	BlocksPerRequest uint8
 	MaxParralelRequests uint8
 	rpc *rpc.Rpc
 }
 
-type WorkerTask struct {
+type workerTask struct {
 	Topic string
 	Address string
 	BlockStartNumber uint64
 	BlockFinishNumber uint64
 }
 
-func (config *WorkerConfig) PerformWork(ctx context.Context, task WorkerTask, workerResult chan<- []types.Log) error {
+func (config *worker) performWork(ctx context.Context, task workerTask, workerResult chan<- []types.Log) error {
 	blocksToFetch := task.BlockFinishNumber - task.BlockStartNumber
 	tasksToPerform := blocksToFetch / uint64(config.BlocksPerRequest) + 1
 

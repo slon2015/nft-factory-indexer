@@ -11,9 +11,9 @@ import (
 )
 
 type Indexer struct {
-	collectionMapper *CollectionCreatedEventMapper
-	tokenMapper *TokenMintedEventMapper
-	config WorkerConfig
+	collectionMapper *collectionCreatedEventMapper
+	tokenMapper *tokenMintedEventMapper
+	config worker
 	address string
 	lastIndexedBlock uint64
 	CollectionCreatedEvents chan []CollectionCreatedEvent
@@ -30,15 +30,15 @@ func NewIndexer(
 	blocksPerRequest uint8,
 	finalisationBlocksCount uint8,
 ) (*Indexer, error) {
-	abi, err := NewParsedAbi();
+	abi, err := newParsedAbi();
 	if err != nil {
 		return nil, err
 	}
 
-	collectionMapper := NewCollectionCreatedEventMapper(abi)
-	tokenMapper := NewTokenMintedEventMapper(abi)
+	collectionMapper := newCollectionCreatedEventMapper(abi)
+	tokenMapper := newTokenMintedEventMapper(abi)
 
-	config := WorkerConfig{
+	config := worker{
 		MaxParralelRequests: parralelRequests / 2,
 		BlocksPerRequest: blocksPerRequest,
 		rpc: rpc,
@@ -84,14 +84,14 @@ func (idx *Indexer) Index(ctx context.Context) {
 		return
 	}
 
-	go idx.config.PerformWork(ctx, WorkerTask{
+	go idx.config.performWork(ctx, workerTask{
 		Topic: COLLECTION_CREATED_TOPIC,
 		Address: idx.address,
 		BlockStartNumber: startBlock,
 		BlockFinishNumber: finishBlocks,
 	}, collectionsResult)
 
-	go idx.config.PerformWork(ctx, WorkerTask{
+	go idx.config.performWork(ctx, workerTask{
 		Topic: TOKEN_MINTED_TOPIC,
 		Address: idx.address,
 		BlockStartNumber: startBlock,
@@ -109,7 +109,7 @@ func (idx *Indexer) Index(ctx context.Context) {
 			log.Default().Printf("Collections job fetched %d logs", len(logs))
 			
 			for _, l := range logs {
-				event, err := idx.collectionMapper.MapToCollectionCreatedEvent(l)
+				event, err := idx.collectionMapper.mapToCollectionCreatedEvent(l)
 				if err != nil {
 					log.Default().Print(err.Error())
 					cancel()
@@ -120,7 +120,7 @@ func (idx *Indexer) Index(ctx context.Context) {
 		case logs := <-tokensResult:
 			log.Default().Printf("Mints job fetched %d logs", len(logs))
 			for _, l := range logs {
-				event, err := idx.tokenMapper.MapToTokenMintedEven(l)
+				event, err := idx.tokenMapper.mapToTokenMintedEven(l)
 				if err != nil {
 					log.Default().Print(err.Error())
 					cancel()

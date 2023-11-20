@@ -22,18 +22,18 @@ type CollectionCreatedEvent struct {
 	Symbol string `json:"symbol"`
 }
 
-type CollectionCreatedEventMapper struct {
+type collectionCreatedEventMapper struct {
 	parsedABI *abi.ABI
 }
 
-func NewCollectionCreatedEventMapper(abi *abi.ABI) *CollectionCreatedEventMapper {
+func newCollectionCreatedEventMapper(abi *abi.ABI) *collectionCreatedEventMapper {
 
-	return &CollectionCreatedEventMapper{
+	return &collectionCreatedEventMapper{
 		parsedABI: abi,
 	}
 }
 
-func (mapper *CollectionCreatedEventMapper) MapToCollectionCreatedEvent(log types.Log) (*CollectionCreatedEvent, error) {
+func (mapper *collectionCreatedEventMapper) mapToCollectionCreatedEvent(log types.Log) (*CollectionCreatedEvent, error) {
 	var event mappedCollectionCreatedEvent;
 	err := mapper.parsedABI.UnpackIntoInterface(&event, "CollectionCreated", log.Data)
 

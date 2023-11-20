@@ -7,7 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 )
 
-func NewParsedAbi() (*abi.ABI, error) {
+func newParsedAbi() (*abi.ABI, error) {
 	abiFile, err := os.Open("./abi/NFTFactory.abi.json")
 
 	if err != nil {
