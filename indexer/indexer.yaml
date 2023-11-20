@@ -1,0 +1,9 @@
+port: 8080
+address: 0x4b626811167Df03B387eBE0A086595Cf64dfb830
+creation-block: 10070250
+rpc:
+  url: https://ethereum-goerli.publicnode.com
+indexer:
+  parralel-requests: 40
+  blocks-per-request: 100
+  finalisation-blocks-count: 5
